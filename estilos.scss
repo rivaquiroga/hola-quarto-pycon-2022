@@ -1,0 +1,34 @@
+/*-- scss:defaults --*/
+
+// fuentes tipográficas
+
+@import url('https://fonts.googleapis.com/css2?family=Libre+Franklin&display=swap');
+
+
+$font-family: 'Libre Franklin', sans-serif;
+
+
+// color
+
+$violeta: #7769F7 !default;
+
+
+/*-- scss:rules --*/
+
+
+/* alineación texto*/
+
+
+p {
+  text-align: justify;
+}
+
+/* color sección seleccionada de la barra de navegación */
+
+.sidebar nav[role=doc-toc] ul>li>a.active {
+    color: $violeta !important;
+}
+
+.sidebar nav[role=doc-toc] ul>li>ul>li>a.active {
+    color: $violeta !important;
+}
