@@ -5,15 +5,27 @@ date: "2022-12-03"
 format: 
   html:
     cap-location: top
+    code-tools: true
+    toc: true
+    toc-location: left
+    title-block-author-single: "Elaborado por"
+    link-external-filter: "#7769F7"
+    fig-align: left
+    theme: estilos.scss
+    mainfont: "Libre Franklin"
+self-contained: true
+lang: "es"
+execute: 
+  echo: false
 ---
 
 ```{python}
 #| message: false
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 import matplotlib as mpl
 from matplotlib.font_manager import FontManager; FontManager().findfont('Libre Franklin', rebuild_if_missing=True)
+import seaborn as sns
 from IPython.display import display, Markdown
 mpl.rcParams['font.sans-serif'] = ['Libre Franklin']
 ```
@@ -31,18 +43,17 @@ datos.poblacion = datos.poblacion/1000000
 pais_analisis = datos[datos["pais"] == "Chile"]
 ```
 
-Los datos fueron obtenidos del sitio web del proyecto [Gapminder](www.gapminder.org) y de la plataforma del [Banco Mundial](www.bancomundial.org). Por acá debiésemos decir algunas cosas más sobre el procesamiento de los datos. En la siguiente tabla se presentan las variables incluidas en la versión final del set de datos utilizados.
+Los datos fueron obtenidos del sitio web del proyecto [Gapminder](www.gapminder.org) y de la plataforma del [Banco Mundial](www.bancomundial.org). Por acá debiésemos decir algunas cosas más sobre el procesamiento de los datos. En la @tbl-variables se presentan las variables incluidas en la versión final del set de datos utilizados.
 
 
 ```{python}
 #| tbl-cap: "Variables incluidas en el set de datos"
-
+#| label: tbl-variables
+#| 
 variables = datos.columns.values.tolist()
 
 tipo = ["caracter", "caracter", "numérica", "numérica", "numérica", "numérica"]
-
 descripcion = ["Nombre del país",  "Continente", "Año de la observación", "Esperanza de vida al nacer en años", "Producto Interno Bruto (PIB) en dólares de 2017", "Población en millones"]
-
 columnas = list(zip(variables, tipo, descripcion))
 tabla_variables = pd.DataFrame(columnas, columns=['Variable', 'Tipo', 'Descripcion'])
 
@@ -52,30 +63,38 @@ tabla_variables
 
 
 
-La versión del set de datos con la que se trabajó incluye observaciones para 177 países entre los años 1990 y 2021. 
+
+```{python}
+total_paises = datos["pais"].nunique()
+min_anio = datos["anio"].min()
+max_anio = datos["anio"].max()
+
+display(Markdown("""
+La versión del set de datos con la que se trabajó incluye observaciones para {total_paises} países entre los años {min_anio} y {max_anio}. 
+""".format(total_paises = total_paises, min_anio = min_anio, max_anio = max_anio)))
+
+```
+
 
 
 ## PIB per cápita en Chile
 
-En la Figura 2 podemos observar la evolución del PIB en Chile en los últimos 30 años:
+En la @fig-pib podemos observar la evolución del PIB en Chile en los últimos 30 años:
 
 ```{python}
 #| warning: false
 #| fig-cap: "PIB per cápita en dólares"
+#| label: fig-pib
 
 custom_params = {"axes.spines.right": False, "axes.spines.top": False}
 sns.set_theme(style = "white", rc = custom_params)
 
 figpib = sns.lineplot(data = pais_analisis, x = "anio", y = "pib", color = "#7769F7", linewidth = 4)
-
 figpib.set_ylabel("pib per cápita en dólares",           fontfamily="Libre Franklin")
 figpib.set(xlabel = None)
 figpib.set_ylim(0, 15000)
-
 figpib.set_xticklabels([1985, 1990, 1995, 2000, 2005, 2010, 1015, 2020, 2025], fontfamily = "Libre Franklin")
-
 figpib.set_yticklabels([0, 2000, 4000, 6000, 8000, 10000, 12000, 14000], fontfamily = "Libre Franklin")
-
 figpib.tick_params(bottom = False, left = False)
 
 plt.show()
@@ -84,29 +103,23 @@ plt.show()
 
 ## Población entre 2010 y 2020
 
-En la Figura 1 podemos observar cómo ha aumentado la población en Chile durante los últimos 10 años:
+En la @fig-pob podemos observar cómo ha aumentado la población en Chile durante los últimos 10 años:
 
 ```{python}
 #| warning: false
 #| fig-cap: "Población (en millones)"
+#| label: fig-pob
 
 ultimos_10 = pais_analisis[pais_analisis["anio"] >= 2010]
 
-
 figpob = sns.barplot(data = ultimos_10, x = "anio", y = "poblacion", color = "#7769F7")
-
-figpob.set_ylabel("población",           fontfamily="Libre Franklin")
+figpob.set_ylabel("población", fontfamily="Libre Franklin")
 figpob.set(xlabel = None)
-
 figpob.set_xticklabels(figpob.get_xticklabels(), fontfamily = "Libre Franklin")
-
 figpob.set_yticklabels([0, 2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20], fontfamily = "Libre Franklin")
-
 figpob.tick_params(bottom = False, left = False)
 
-
 plt.show()
-
 ```
 
 
@@ -119,14 +132,8 @@ Los datos disponibles para el año en cuestión se muestran en la siguiente tabl
 #| tbl-cap: "Variables de desarrollo"
 
 foco = pais_analisis[pais_analisis["anio"] == 2009]
-
 foco['poblacion'] = foco['poblacion'].astype(int)
-
 foco['pib'] = foco['pib'].astype(int)
-
-
 foco[["esperanza_vida","poblacion","pib"]]
-
-
 
 ```
